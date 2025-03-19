@@ -29,7 +29,17 @@ runs:
       shell: bash
 
     - name: Setup DDEV
-      uses: ddev/github-action-setup-ddev@v1
+      continue-on-error: true
+      run: |
+        echo 'docker compose --compatibility "$@"' > /usr/local/bin/docker-compose
+        chmod +x /usr/local/bin/docker-compose
+        echo ">>> Installing DDEV..."
+        curl -fsSL https://apt.fury.io/drud/gpg.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/ddev.gpg > /dev/null
+        echo "deb [signed-by=/etc/apt/trusted.gpg.d/ddev.gpg] https://apt.fury.io/drud/ * *" | sudo tee /etc/apt/sources.list.d/ddev.list
+        sudo apt-get update && sudo apt-get install -y ddev
+        ddev config global --instrumentation-opt-in=false
+        ddev --version
+      shell: bash
 
     - name: "Validate composer.json and composer.lock"
       run: "composer validate --strict"
