@@ -1,0 +1,80 @@
+name: 'Lando Start'
+description: 'Spin up oit website'
+inputs:
+  GH_TOKEN_REPO:
+    description: "PAT"
+    required: true
+  GITHUB_TOKEN:
+    description: "Github token"
+    required: true
+  LANDO_ENV:
+    description: ".env variables"
+    required: true
+  CONFIG_SYNC:
+    description: "Set to 0 to skip a config import"
+    required: true
+  DATABASE:
+    description: "Use specific backup"
+    required: false
+permissions:
+  contents: read
+
+runs:
+  using: "composite"
+  steps:
+    - name: Custom DATABASE
+      run: echo "DATABASE=$( $DATABASE )" >> $GITHUB_ENV
+      env:
+        database: ${{ inputs.DATABASE }}
+      shell: bash
+
+    - name: Setup DDEV
+      uses: ddev/github-action-setup-ddev@v1
+
+    - name: "Validate composer.json and composer.lock"
+      run: "composer validate --strict"
+      shell: bash
+
+    - name: Composer install
+      run: |
+        composer config -g github-oauth.github.com $gh_token
+        composer install --ignore-platform-reqs --prefer-dist -n
+      shell: bash
+      env:
+        gh_token: ${{ inputs.GH_TOKEN_REPO }}
+
+    - name: Last Sunday date
+      run: echo "LAST_SUNDAY=$(date -d "last Sunday" +%Y-%m-%d)" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Todays date
+      run: echo "DATE=$(date +%Y-%m-%d)" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Spin up site
+      run: |
+        mkdir .ddev
+        echo "$lando_env" > .ddev/.env
+        echo "GITHUB_TOKEN=$GITHUB_TOKEN" >> .ddev/.env
+        vendor/bin/robo ddevsetup $gh_token $config_sync
+        ls docroot/sites/default/settings/
+      shell: bash
+      env:
+        gh_token: ${{ inputs.GH_TOKEN_REPO }}
+        GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
+        lando_env: ${{ inputs.LANDO_ENV }}
+        config_sync:  ${{ inputs.CONFIG_SYNC }}
+
+    - name: Custom Database
+      if: "${{ env.DATABASE != '' }}"
+      run: |
+        rm backups/site.sql.gz
+        wget -O backups/site.sql.gz '$DATABASE'
+        ddev import-db backups/site.sql.gz
+        ddev drush sql-sanitize --sanitize-password -y
+        chmod u+x .keys/createTestUsers.sh
+        ddev exec "/app/.keys/createTestUsers.sh"
+        ddev drush en oit_dev
+        ddev drush en dblog devel devel_kint_extras
+      shell: bash
+
