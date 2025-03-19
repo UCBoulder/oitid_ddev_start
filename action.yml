@@ -39,6 +39,9 @@ runs:
         sudo apt-get update && sudo apt-get install -y ddev
         ddev config global --instrumentation-opt-in=false
         ddev --version
+
+        # One-time initialization of mkcert
+        mkcert -install
       shell: bash
 
     - name: "Validate composer.json and composer.lock"
