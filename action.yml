@@ -66,6 +66,7 @@ runs:
         mkdir .ddev
         echo "$lando_env" > .ddev/.env
         echo "GITHUB_TOKEN=$GITHUB_TOKEN" >> .ddev/.env
+        rm -fR docroot/sites/default/files
         vendor/bin/robo ddevsetup $gh_token $config_sync
         ls docroot/sites/default/settings/
       shell: bash
