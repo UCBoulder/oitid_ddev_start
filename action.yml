@@ -70,6 +70,8 @@ runs:
         echo "$lando_env" > .ddev/.env
         echo "GITHUB_TOKEN=$GITHUB_TOKEN" >> .ddev/.env
         rm -fR docroot/sites/default/files
+        echo "❗️ Copying ddev config file ❗️"
+        cp robo/assets/ddev.config.yml .ddev/config.yaml
         vendor/bin/robo ddevsetup $gh_token $config_sync
         ls docroot/sites/default/settings/
       shell: bash
