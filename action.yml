@@ -71,7 +71,7 @@ runs:
         echo "GITHUB_TOKEN=$GITHUB_TOKEN" >> .ddev/.env
         rm -fR docroot/sites/default/files
         echo "❗️ Copying robo config file ❗️"
-        cp $dir/robo/assets/robo.yml $dir/robo.yml
+        cp robo/assets/robo.yml robo.yml
         vendor/bin/robo ddevsetup $gh_token $config_sync
         ls docroot/sites/default/settings/
       shell: bash
