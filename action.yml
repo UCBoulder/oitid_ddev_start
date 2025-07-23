@@ -29,6 +29,7 @@ runs:
     - name: Setup DDEV
       continue-on-error: true
       run: |
+        ls -la secrets.json
         echo 'docker compose --compatibility "$@"' > /usr/local/bin/docker-compose
         chmod +x /usr/local/bin/docker-compose
         echo ">>> Installing DDEV..."
