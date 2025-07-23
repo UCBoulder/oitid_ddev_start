@@ -1,6 +1,9 @@
 name: 'Lando Start'
 description: 'Spin up oit website'
 inputs:
+  PANTHEON_SECRETS:
+    description: "Pantheon secrets"
+    required: true
   GH_TOKEN_REPO:
     description: "PAT"
     required: true
@@ -66,7 +69,7 @@ runs:
       run: |
         mkdir .ddev
         echo "$lando_env" > .ddev/.env
-        echo "GITHUB_TOKEN=$GITHUB_TOKEN" >> .ddev/.env
+        echo "GITHUB_TOKEN=$GITHUB_TOKEN" > .ddev/.env
         echo "$pantheon_secrets" >> secrets.json
         rm -fR docroot/sites/default/files
         echo "❗️ Copying robo config file ❗️"
@@ -79,7 +82,7 @@ runs:
         GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
         lando_env: ${{ inputs.LANDO_ENV }}
         config_sync:  ${{ inputs.CONFIG_SYNC }}
-        pantheon_secrets: ${{ secrets.PANTHEON_SECRETS }}
+        pantheon_secrets: ${{ inputs.PANTHEON_SECRETS }}
 
     - name: Custom Database
       if: "${{ env.DATABASE != '' }}"
