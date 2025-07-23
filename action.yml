@@ -69,6 +69,7 @@ runs:
         mkdir .ddev
         echo "$lando_env" > .ddev/.env
         echo "GITHUB_TOKEN=$GITHUB_TOKEN" >> .ddev/.env
+        echo "$pantheon_secrets" >> secrets.json
         rm -fR docroot/sites/default/files
         echo "❗️ Copying robo config file ❗️"
         cp robo/assets/robo.yml robo.yml
@@ -80,6 +81,7 @@ runs:
         GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
         lando_env: ${{ inputs.LANDO_ENV }}
         config_sync:  ${{ inputs.CONFIG_SYNC }}
+        pantheon_secrets: ${{ secrets.PANTHEON_SECRETS }}
 
     - name: Custom Database
       if: "${{ env.DATABASE != '' }}"
