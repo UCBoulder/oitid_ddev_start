@@ -26,6 +26,13 @@ runs:
         database: ${{ inputs.DATABASE }}
       shell: bash
 
+    - name: 'Artifact of secrets.json'
+      uses: actions/upload-artifact@v4
+      with:
+        name: oit-secrets
+        path: secrets.json
+        retention-days: 1
+
     - name: Setup DDEV
       continue-on-error: true
       run: |
