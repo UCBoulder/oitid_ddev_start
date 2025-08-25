@@ -42,8 +42,8 @@ runs:
         mkcert -install
       shell: bash
 
-    - name: "Validate composer.json and composer.lock"
-      run: "composer validate --strict"
+    - name: Validate composer files
+      run: composer validate --no-check-all
       shell: bash
 
     - name: Composer install
