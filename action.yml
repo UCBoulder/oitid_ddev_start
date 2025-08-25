@@ -49,7 +49,7 @@ runs:
     - name: Composer install
       run: |
         composer config -g github-oauth.github.com $gh_token
-        composer install --ignore-platform-reqs --prefer-dist -n
+        composer install --ignore-platform-reqs --prefer-dist --no-interaction -n
       shell: bash
       env:
         gh_token: ${{ inputs.GH_TOKEN_REPO }}
