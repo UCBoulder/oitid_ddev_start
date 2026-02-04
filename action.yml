@@ -37,6 +37,7 @@ runs:
         sudo apt-get update && sudo apt-get install -y ddev
         ddev config global --instrumentation-opt-in=false
         ddev --version
+        ddev add-on get ddev/ddev-drupal-solr
 
         # One-time initialization of mkcert
         mkcert -install
