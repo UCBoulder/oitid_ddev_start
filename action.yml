@@ -58,7 +58,6 @@ runs:
 
     - name: Spin up site
       run: |
-        mkdir .ddev
         echo "$lando_env" > .ddev/.env
         echo "CUSTOMER_SECRETS_FAKE_FILE=/var/www/html/secrets.json" >> .ddev/.env
         echo "GITHUB_TOKEN=$GITHUB_TOKEN" >> .ddev/.env
