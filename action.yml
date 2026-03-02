@@ -27,19 +27,14 @@ runs:
       shell: bash
 
     - name: Setup DDEV
-      continue-on-error: true
-      run: |
-        echo 'docker compose --compatibility "$@"' > /usr/local/bin/docker-compose
-        chmod +x /usr/local/bin/docker-compose
-        echo ">>> Installing DDEV..."
-        curl -fsSL https://apt.fury.io/drud/gpg.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/ddev.gpg > /dev/null
-        echo "deb [signed-by=/etc/apt/trusted.gpg.d/ddev.gpg] https://apt.fury.io/drud/ * *" | sudo tee /etc/apt/sources.list.d/ddev.list
-        sudo apt-get update && sudo apt-get install -y ddev
-        ddev config global --instrumentation-opt-in=false
-        ddev --version
-        ddev add-on get ddev/ddev-drupal-solr
+      uses: ddev/github-action-setup-ddev@v1
+      with:
+        autostart: false
 
-        # One-time initialization of mkcert
+    - name: Configure DDEV
+      run: |
+        ddev config global --instrumentation-opt-in=false
+        ddev add-on get ddev/ddev-drupal-solr
         mkcert -install
       shell: bash
 
@@ -55,12 +50,10 @@ runs:
       env:
         gh_token: ${{ inputs.GH_TOKEN_REPO }}
 
-    - name: Last Sunday date
-      run: echo "LAST_SUNDAY=$(date -d "last Sunday" +%Y-%m-%d)" >> $GITHUB_ENV
-      shell: bash
-
-    - name: Todays date
-      run: echo "DATE=$(date +%Y-%m-%d)" >> $GITHUB_ENV
+    - name: Set date env vars
+      run: |
+        echo "LAST_SUNDAY=$(date -d 'last Sunday' +%Y-%m-%d)" >> $GITHUB_ENV
+        echo "DATE=$(date +%Y-%m-%d)" >> $GITHUB_ENV
       shell: bash
 
     - name: Spin up site
